@@ -3,22 +3,411 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Frontend Projects</title>
+    <title>Frontend Arena Projects</title>
+    
+    <!-- Google Fonts: Playfair Display & Lato -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
     <style>
-        body { font-family: sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background-color: white; padding: 2rem 3rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
-        h1 { color: #333; margin-bottom: 2rem; }
-        a { display: block; background-color: #007bff; color: white; padding: 1rem; margin: 1rem 0; border-radius: 8px; text-decoration: none; font-size: 1.1rem; transition: background-color 0.3s; }
-        a:hover { background-color: #0056b3; }
+        :root {
+            --bg-color-1: #0f2027;
+            --bg-color-2: #203a43;
+            --bg-color-3: #2c5364;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(-45deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1542751371-2cf67ab40947?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .portfolio-container {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .portfolio-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .portfolio-subtitle {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 3.5rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card, .ai-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem 1.5rem;
+            text-decoration: none;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .project-card:hover, .ai-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .project-card::before, .ai-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 75%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: skewX(-25deg);
+            transition: left 0.6s ease;
+        }
+
+        .project-card:hover::before, .ai-card:hover::before {
+            left: 150%;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: #fff;
+        }
+        
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-description {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* --- Gemini AI Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #1a202c;
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-content h2 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 1.5rem;
+        }
+
+        #story-prompt {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #4a5568;
+            background: #2d3748;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        #generate-story-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #ec4899, #f59e0b);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        #story-result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #2d3748;
+            border-radius: 8px;
+            min-height: 100px;
+            white-space: pre-wrap; /* Preserve line breaks */
+            text-align: left;
+        }
+        
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ec4899;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+            display: none; /* Hidden by default */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .portfolio-container { padding: 2rem; }
+            .portfolio-title { font-size: 2.5rem; }
+            .card-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>My Frontend Arena Projects</h1>
-        <a href="project1.html">Project 1: Mini Game Zone</a>
-        <a href="project2.html">Project 2: Fun with Randomness</a>
-        <a href="project3.html">Project 3: Multi-Calculator</a>
-        <a href="project4.html">Project 4: Authentication UI</a>
+    <div class="portfolio-container">
+        <h1 class="portfolio-title">Frontend Arena</h1>
+        <p class="portfolio-subtitle">A collection of interactive web projects.</p>
+        
+        <div class="card-grid">
+            <a href="project1.html" class="project-card">
+                <div class="card-icon"><i class="fas fa-gamepad"></i></div>
+                <h2 class="card-title">Mini Game Zone</h2>
+                <p class="card-description">A collection of fun, interactive browser games.</p>
+            </a>
+            
+            <a href="project2.html" class="project-card">
+                <div class="card-icon"><i class="fas fa-dice-d6"></i></div>
+                <h2 class="card-title">Fun with Randomness</h2>
+                <p class="card-description">Creative tools for quotes, colors, and passwords.</p>
+            </a>
+            
+            <a href="project3.html" class="project-card">
+                <div class="card-icon"><i class="fas fa-calculator"></i></div>
+                <h2 class="card-title">Multi-Calculator</h2>
+                <p class="card-description">An all-in-one app for various calculations.</p>
+            </a>
+            
+            <a href="project4.html" class="project-card">
+                <div class="card-icon"><i class="fas fa-user-shield"></i></div>
+                <h2 class="card-title">Authentication UI</h2>
+                <p class="card-description">A sleek, modern login and registration interface.</p>
+            </a>
+            
+            <!-- New AI-powered card -->
+            <div id="ai-story-card" class="ai-card">
+                <div class="card-icon"><i class="fas fa-magic-sparkles"></i></div>
+                <h2 class="card-title">✨ AI Story Generator</h2>
+                <p class="card-description">Give the AI a topic and get a unique short story.</p>
+            </div>
+        </div>
     </div>
+
+    <!-- AI Story Generator Modal -->
+    <div id="story-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="modal-close-btn" class="modal-close">&times;</button>
+            <h2>✨ AI Story Generator</h2>
+            <p>Enter a topic and let Gemini write a story for you!</p>
+            <input type="text" id="story-prompt" placeholder="e.g., A robot who dreams of being a chef">
+            <button id="generate-story-btn">Generate Story</button>
+            <div class="loader" id="story-loader"></div>
+            <div id="story-result">Your story will appear here...</div>
+        </div>
+    </div>
+
+    <script>
+        // --- Modal Logic ---
+        const storyModal = document.getElementById('story-modal');
+        const aiStoryCard = document.getElementById('ai-story-card');
+        const closeModalBtn = document.getElementById('modal-close-btn');
+
+        aiStoryCard.addEventListener('click', () => {
+            storyModal.classList.add('visible');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            storyModal.classList.remove('visible');
+        });
+        
+        storyModal.addEventListener('click', (e) => {
+            if (e.target === storyModal) {
+                storyModal.classList.remove('visible');
+            }
+        });
+
+        // --- Gemini API Logic ---
+        const generateBtn = document.getElementById('generate-story-btn');
+        const storyPromptInput = document.getElementById('story-prompt');
+        const storyResultDiv = document.getElementById('story-result');
+        const storyLoader = document.getElementById('story-loader');
+
+        const apiKey = ""; // Leave empty, it will be handled by the environment
+
+        const generateStory = async () => {
+            const promptText = storyPromptInput.value;
+            if (!promptText) {
+                storyResultDiv.textContent = "Please enter a topic for the story.";
+                return;
+            }
+
+            storyLoader.style.display = 'block';
+            generateBtn.disabled = true;
+            storyResultDiv.textContent = '';
+
+            const fullPrompt = `Write a short, fun story for a gaming website based on this topic: "${promptText}". Keep it under 200 words.`;
+            
+            let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }];
+            const payload = { contents: chatHistory };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            try {
+                // Exponential backoff for retries
+                let response;
+                let retries = 3;
+                let delay = 1000;
+                for (let i = 0; i < retries; i++) {
+                    response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) break;
+                    if (response.status === 429 || response.status >= 500) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    storyResultDiv.textContent = text.trim();
+                } else {
+                    storyResultDiv.textContent = 'Sorry, I could not generate a story. The response was empty.';
+                }
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                storyResultDiv.textContent = "Sorry, something went wrong while generating the story. Please try again later.";
+            } finally {
+                storyLoader.style.display = 'none';
+                generateBtn.disabled = false;
+            }
+        };
+
+        generateBtn.addEventListener('click', generateStory);
+
+    </script>
 </body>
 </html>
