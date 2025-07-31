@@ -350,7 +350,7 @@
         const storyLoader = document.getElementById('story-loader');
 
         // API Key has been added here
-        const apiKey = "AIzaSyB_IiOpsTBoBUeG0PTrgTwxIU--xzS6qpI";
+        const apiKey = "AIzaSyC2oSLYopY7O_2NsFW-fwU3KD_SqqOBRmA";
 
         const generateStory = async () => {
             const promptText = storyPromptInput.value;
@@ -413,7 +413,8 @@
 
             } catch (error) {
                 console.error("Gemini API Error:", error);
-                storyResultDiv.textContent = `Error: ${error.message}. Please check the console for more details.`;
+                // Updated, more helpful error message
+                storyResultDiv.textContent = `Error: ${error.message}. This can happen if the API key is restricted. Please check your key's settings on the Google Cloud Console to ensure it can be used from this website.`;
             } finally {
                 storyLoader.style.display = 'none';
                 generateBtn.disabled = false;
