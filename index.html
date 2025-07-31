@@ -404,7 +404,7 @@
         });
 
         downloadBtn.addEventListener('click', () => {
-            if (!imagePreview.src) {
+            if (!imagePreview.src || imagePreview.src === window.location.href) {
                 alert("Please upload an image first.");
                 return;
             }
@@ -432,7 +432,7 @@
                 link.click();
             };
             img.onerror = () => {
-                alert("Could not load the image for download. Please try another image.");
+                alert("Could not load the image for download. This can happen with some remote images due to security policies. Please try a different image.");
             }
         });
 
