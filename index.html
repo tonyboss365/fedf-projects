@@ -97,7 +97,7 @@
             gap: 2rem;
         }
 
-        .project-card, .ai-card {
+        .project-card, .interactive-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 2rem 1.5rem;
@@ -110,14 +110,14 @@
             cursor: pointer;
         }
 
-        .project-card:hover, .ai-card:hover {
+        .project-card:hover, .interactive-card:hover {
             transform: translateY(-10px) scale(1.03);
             box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
             background: rgba(255, 255, 255, 0.1);
             border-color: rgba(255, 255, 255, 0.3);
         }
         
-        .project-card::before, .ai-card::before {
+        .project-card::before, .interactive-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -129,7 +129,7 @@
             transition: left 0.6s ease;
         }
 
-        .project-card:hover::before, .ai-card:hover::before {
+        .project-card:hover::before, .interactive-card:hover::before {
             left: 150%;
         }
 
@@ -153,7 +153,7 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
-        /* --- Gemini AI Modal Styles --- */
+        /* --- Modal Styles --- */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -182,7 +182,7 @@
             padding: 2rem;
             border-radius: 15px;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             transform: scale(0.9);
             transition: transform 0.3s ease;
@@ -208,58 +208,52 @@
             font-family: 'Playfair Display', serif;
             margin-bottom: 1.5rem;
         }
-
-        #story-prompt {
+        
+        /* --- Image Utility Styles --- */
+        #image-preview-container {
             width: 100%;
-            padding: 0.75rem;
+            min-height: 300px;
+            background: #2d3748;
             border-radius: 8px;
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #image-preview {
+            max-width: 100%;
+            max-height: 400px;
+            transition: filter 0.3s ease;
+        }
+        #image-controls {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        .filter-btn {
+            padding: 0.5rem 1rem;
             border: 1px solid #4a5568;
             background: #2d3748;
             color: white;
-            margin-bottom: 1rem;
+            border-radius: 20px;
+            cursor: pointer;
         }
-
-        #generate-story-btn {
+        #upload-btn {
             width: 100%;
             padding: 0.75rem;
             border: none;
             border-radius: 8px;
-            background: linear-gradient(45deg, #ec4899, #f59e0b);
+            background: linear-gradient(45deg, #2575fc, #6a11cb);
             color: white;
             font-weight: bold;
             cursor: pointer;
-            transition: opacity 0.2s;
+            text-align: center;
         }
-        
-        #generate-story-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        #story-result {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: #2d3748;
-            border-radius: 8px;
-            min-height: 100px;
-            white-space: pre-wrap; /* Preserve line breaks */
-            text-align: left;
-        }
-        
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #ec4899;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 1rem auto;
-            display: none; /* Hidden by default */
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        #file-input {
+            display: none;
         }
 
         /* Responsive adjustments */
@@ -301,127 +295,78 @@
                 <p class="card-description">A sleek, modern login and registration interface.</p>
             </a>
             
-            <!-- New AI-powered card -->
-            <div id="ai-story-card" class="ai-card">
-                <div class="card-icon"><i class="fas fa-magic-sparkles"></i></div>
-                <h2 class="card-title">✨ AI Story Generator</h2>
-                <p class="card-description">Give the AI a topic and get a unique short story.</p>
+            <!-- New Image Utility card -->
+            <div id="image-utility-card" class="interactive-card">
+                <div class="card-icon"><i class="fas fa-image"></i></div>
+                <h2 class="card-title">🖼️ Image Utility App</h2>
+                <p class="card-description">Upload and apply cool filters to your images.</p>
             </div>
         </div>
     </div>
 
-    <!-- AI Story Generator Modal -->
-    <div id="story-modal" class="modal-overlay">
+    <!-- Image Utility Modal -->
+    <div id="image-modal" class="modal-overlay">
         <div class="modal-content">
-            <button id="modal-close-btn" class="modal-close">&times;</button>
-            <h2>✨ AI Story Generator</h2>
-            <p>Enter a topic and let Gemini write a story for you!</p>
-            <input type="text" id="story-prompt" placeholder="e.g., A robot who dreams of being a chef">
-            <button id="generate-story-btn">Generate Story</button>
-            <div class="loader" id="story-loader"></div>
-            <div id="story-result">Your story will appear here...</div>
+            <button id="image-modal-close-btn" class="modal-close">&times;</button>
+            <h2>🖼️ Image Utility App</h2>
+            <input type="file" id="file-input" accept="image/*">
+            <label for="file-input" id="upload-btn">Upload Image</label>
+            
+            <div id="image-preview-container">
+                <img id="image-preview" src="" alt="Image preview will appear here">
+            </div>
+
+            <div id="image-controls">
+                <button class="filter-btn" data-filter="none">Normal</button>
+                <button class="filter-btn" data-filter="grayscale(100%)">Grayscale</button>
+                <button class="filter-btn" data-filter="sepia(100%)">Sepia</button>
+                <button class="filter-btn" data-filter="invert(100%)">Invert</button>
+                <button class="filter-btn" data-filter="contrast(200%)">Contrast</button>
+                <button class="filter-btn" data-filter="blur(5px)">Blur</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- Modal Logic ---
-        const storyModal = document.getElementById('story-modal');
-        const aiStoryCard = document.getElementById('ai-story-card');
-        const closeModalBtn = document.getElementById('modal-close-btn');
+        // --- Image Utility Modal Logic ---
+        const imageModal = document.getElementById('image-modal');
+        const imageUtilityCard = document.getElementById('image-utility-card');
+        const closeImageModalBtn = document.getElementById('image-modal-close-btn');
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+        const imageControls = document.getElementById('image-controls');
 
-        aiStoryCard.addEventListener('click', () => {
-            storyModal.classList.add('visible');
+        imageUtilityCard.addEventListener('click', () => {
+            imageModal.classList.add('visible');
         });
 
-        closeModalBtn.addEventListener('click', () => {
-            storyModal.classList.remove('visible');
+        closeImageModalBtn.addEventListener('click', () => {
+            imageModal.classList.remove('visible');
         });
         
-        storyModal.addEventListener('click', (e) => {
-            if (e.target === storyModal) {
-                storyModal.classList.remove('visible');
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                imageModal.classList.remove('visible');
             }
         });
 
-        // --- Gemini API Logic ---
-        const generateBtn = document.getElementById('generate-story-btn');
-        const storyPromptInput = document.getElementById('story-prompt');
-        const storyResultDiv = document.getElementById('story-result');
-        const storyLoader = document.getElementById('story-loader');
-
-        // API Key has been added here
-        const apiKey = "AIzaSyC2oSLYopY7O_2NsFW-fwU3KD_SqqOBRmA";
-
-        const generateStory = async () => {
-            const promptText = storyPromptInput.value;
-            if (!promptText) {
-                storyResultDiv.textContent = "Please enter a topic for the story.";
-                return;
-            }
-            
-            if (apiKey === "" || apiKey === "YOUR_API_KEY_HERE") {
-                storyResultDiv.textContent = "API Key is missing. Please add your API key in the script section of the HTML file.";
-                return;
-            }
-
-            storyLoader.style.display = 'block';
-            generateBtn.disabled = true;
-            storyResultDiv.textContent = '';
-
-            const fullPrompt = `Write a short, fun story for a gaming website based on this topic: "${promptText}". Keep it under 200 words.`;
-            
-            let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }];
-            const payload = { contents: chatHistory };
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-            try {
-                // Exponential backoff for retries
-                let response;
-                let retries = 3;
-                let delay = 1000;
-                for (let i = 0; i < retries; i++) {
-                    response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (response.ok) break;
-                    if (response.status === 429 || response.status >= 500) {
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2;
-                    } else {
-                        break;
-                    }
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imagePreview.src = event.target.result;
                 }
-
-                if (!response.ok) {
-                    const errorBody = await response.json();
-                    const errorMessage = errorBody?.error?.message || `API request failed with status ${response.status}`;
-                    throw new Error(errorMessage);
-                }
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    storyResultDiv.textContent = text.trim();
-                } else {
-                    storyResultDiv.textContent = 'Sorry, I could not generate a story. The response was empty.';
-                }
-
-            } catch (error) {
-                console.error("Gemini API Error:", error);
-                // Updated, more helpful error message
-                storyResultDiv.textContent = `Error: ${error.message}. This can happen if the API key is restricted. Please check your key's settings on the Google Cloud Console to ensure it can be used from this website.`;
-            } finally {
-                storyLoader.style.display = 'none';
-                generateBtn.disabled = false;
+                reader.readAsDataURL(file);
             }
-        };
+        });
 
-        generateBtn.addEventListener('click', generateStory);
+        imageControls.addEventListener('click', (e) => {
+            if (e.target.matches('.filter-btn')) {
+                const filter = e.target.dataset.filter;
+                imagePreview.style.filter = filter;
+            }
+        });
 
     </script>
 </body>
