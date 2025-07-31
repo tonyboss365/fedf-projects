@@ -182,7 +182,7 @@
             padding: 2rem;
             border-radius: 15px;
             width: 90%;
-            max-width: 700px;
+            max-width: 800px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             transform: scale(0.9);
             transition: transform 0.3s ease;
@@ -210,12 +210,16 @@
         }
         
         /* --- Image Utility Styles --- */
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
         #image-preview-container {
             width: 100%;
             min-height: 300px;
             background: #2d3748;
             border-radius: 8px;
-            margin-top: 1.5rem;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -240,17 +244,30 @@
             color: white;
             border-radius: 20px;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
-        #upload-btn {
-            width: 100%;
+        .filter-btn:hover {
+            background-color: #4a5568;
+        }
+        .action-btn {
+            flex-grow: 1;
             padding: 0.75rem;
             border: none;
             border-radius: 8px;
-            background: linear-gradient(45deg, #2575fc, #6a11cb);
             color: white;
             font-weight: bold;
             cursor: pointer;
             text-align: center;
+            transition: transform 0.2s;
+        }
+        .action-btn:hover {
+            transform: scale(1.02);
+        }
+        #upload-btn {
+            background: linear-gradient(45deg, #2575fc, #6a11cb);
+        }
+        #download-btn {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
         }
         #file-input {
             display: none;
@@ -309,8 +326,11 @@
         <div class="modal-content">
             <button id="image-modal-close-btn" class="modal-close">&times;</button>
             <h2>🖼️ Image Utility App</h2>
-            <input type="file" id="file-input" accept="image/*">
-            <label for="file-input" id="upload-btn">Upload Image</label>
+            <div class="modal-actions">
+                <input type="file" id="file-input" accept="image/*">
+                <label for="file-input" id="upload-btn" class="action-btn">Upload Image</label>
+                <button id="download-btn" class="action-btn">Download Image</button>
+            </div>
             
             <div id="image-preview-container">
                 <img id="image-preview" src="" alt="Image preview will appear here">
@@ -323,6 +343,20 @@
                 <button class="filter-btn" data-filter="invert(100%)">Invert</button>
                 <button class="filter-btn" data-filter="contrast(200%)">Contrast</button>
                 <button class="filter-btn" data-filter="blur(5px)">Blur</button>
+                <button class="filter-btn" data-filter="brightness(150%)">Brighten</button>
+                <button class="filter-btn" data-filter="brightness(50%)">Darken</button>
+                <button class="filter-btn" data-filter="saturate(200%)">Saturate</button>
+                <button class="filter-btn" data-filter="saturate(50%)">Desaturate</button>
+                <button class="filter-btn" data-filter="hue-rotate(90deg)">Hue Shift</button>
+                <button class="filter-btn" data-filter="opacity(50%)">Transparent</button>
+                <button class="filter-btn" data-filter="drop-shadow(8px 8px 10px gray)">Shadow</button>
+                <button class="filter-btn" data-filter="sepia(1) saturate(3)">Vintage</button>
+                <button class="filter-btn" data-filter="contrast(1.4) saturate(1.2)">Vibrant</button>
+                <button class="filter-btn" data-filter="brightness(1.2) contrast(0.8) saturate(0.8)">Dreamy</button>
+                <button class="filter-btn" data-filter="grayscale(1) contrast(2)">Noir</button>
+                <button class="filter-btn" data-filter="hue-rotate(180deg) saturate(2)">Psychedelic</button>
+                <button class="filter-btn" data-filter="brightness(0.9) contrast(1.1) sepia(0.3)">Rustic</button>
+                <button class="filter-btn" data-filter="saturate(1.5) hue-rotate(-10deg)">Sunset</button>
             </div>
         </div>
     </div>
@@ -335,6 +369,7 @@
         const fileInput = document.getElementById('file-input');
         const imagePreview = document.getElementById('image-preview');
         const imageControls = document.getElementById('image-controls');
+        const downloadBtn = document.getElementById('download-btn');
 
         imageUtilityCard.addEventListener('click', () => {
             imageModal.classList.add('visible');
@@ -365,6 +400,39 @@
             if (e.target.matches('.filter-btn')) {
                 const filter = e.target.dataset.filter;
                 imagePreview.style.filter = filter;
+            }
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            if (!imagePreview.src) {
+                alert("Please upload an image first.");
+                return;
+            }
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.crossOrigin = "anonymous"; // Handle potential CORS issues
+            img.src = imagePreview.src;
+
+            img.onload = () => {
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                
+                // Apply the same filter to the canvas context
+                ctx.filter = imagePreview.style.filter;
+                
+                // Draw the image onto the canvas
+                ctx.drawImage(img, 0, 0);
+                
+                // Create a link to download the canvas content
+                const link = document.createElement('a');
+                link.download = 'filtered-image.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            };
+            img.onerror = () => {
+                alert("Could not load the image for download. Please try another image.");
             }
         });
 
