@@ -182,7 +182,7 @@
             padding: 2rem;
             border-radius: 15px;
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             transform: scale(0.9);
             transition: transform 0.3s ease;
@@ -209,56 +209,69 @@
             margin-bottom: 1.5rem;
         }
         
-        /* --- Productivity Toolkit Styles --- */
-        .toolkit-tabs {
+        /* --- Image Utility Styles --- */
+        .modal-actions {
             display: flex;
+            gap: 1rem;
             margin-bottom: 1.5rem;
+        }
+        #image-preview-container {
+            width: 100%;
+            min-height: 300px;
             background: #2d3748;
             border-radius: 8px;
-            padding: 0.25rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
-        .toolkit-tab {
-            flex: 1;
-            padding: 0.75rem;
-            background: transparent;
-            border: none;
-            color: rgba(255,255,255,0.7);
-            cursor: pointer;
-            border-radius: 6px;
-            transition: background-color 0.3s, color 0.3s;
+        #image-preview {
+            max-width: 100%;
+            max-height: 400px;
+            transition: filter 0.3s ease;
         }
-        .toolkit-tab.active {
-            background: #4a5568;
-            color: white;
+        #image-controls {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
         }
-        .toolkit-content { display: none; }
-        .toolkit-content.active { display: block; }
-        
-        /* To-Do List */
-        #todo-input {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 8px;
+        .filter-btn {
+            padding: 0.5rem 1rem;
             border: 1px solid #4a5568;
             background: #2d3748;
             color: white;
-            margin-bottom: 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
-        #add-task-btn {
-            width: 100%; padding: 0.75rem; border: none; border-radius: 8px; background: linear-gradient(45deg, #2575fc, #6a11cb); color: white; font-weight: bold; cursor: pointer;
+        .filter-btn:hover {
+            background-color: #4a5568;
         }
-        #task-list { list-style: none; margin-top: 1rem; max-height: 250px; overflow-y: auto; }
-        .task-item { display: flex; align-items: center; background: #2d3748; padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; }
-        .task-item.completed span { text-decoration: line-through; opacity: 0.5; }
-        .task-item span { flex-grow: 1; text-align: left; }
-        .task-actions button { background: none; border: none; color: white; cursor: pointer; margin-left: 0.5rem; font-size: 1rem; }
-        
-        /* Stopwatch */
-        #stopwatch-display { font-size: 3rem; text-align: center; margin: 2rem 0; font-family: monospace; }
-        #stopwatch-controls { display: flex; justify-content: center; gap: 1rem; }
-        .stopwatch-btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
-        #start-stop-btn { background: #38ef7d; }
-        #reset-btn { background: #f56565; }
+        .action-btn {
+            flex-grow: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .action-btn:hover {
+            transform: scale(1.02);
+        }
+        #upload-btn {
+            background: linear-gradient(45deg, #2575fc, #6a11cb);
+        }
+        #download-btn {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+        }
+        #file-input {
+            display: none;
+        }
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
@@ -299,169 +312,129 @@
                 <p class="card-description">A sleek, modern login and registration interface.</p>
             </a>
             
-            <!-- New Productivity Toolkit card -->
-            <div id="productivity-card" class="interactive-card">
-                <div class="card-icon"><i class="fas fa-tasks"></i></div>
-                <h2 class="card-title">📝 Productivity Toolkit</h2>
-                <p class="card-description">Manage tasks with a to-do list and track time with a stopwatch.</p>
+            <!-- New Image Utility card -->
+            <div id="image-utility-card" class="interactive-card">
+                <div class="card-icon"><i class="fas fa-image"></i></div>
+                <h2 class="card-title">🖼️ Image Utility App</h2>
+                <p class="card-description">Upload and apply cool filters to your images.</p>
             </div>
         </div>
     </div>
 
-    <!-- Productivity Toolkit Modal -->
-    <div id="productivity-modal" class="modal-overlay">
+    <!-- Image Utility Modal -->
+    <div id="image-modal" class="modal-overlay">
         <div class="modal-content">
-            <button id="productivity-modal-close-btn" class="modal-close">&times;</button>
-            <h2>📝 Productivity Toolkit</h2>
-            <div class="toolkit-tabs">
-                <button class="toolkit-tab active" data-tab="todo">To-Do List</button>
-                <button class="toolkit-tab" data-tab="stopwatch">Stopwatch</button>
+            <button id="image-modal-close-btn" class="modal-close">&times;</button>
+            <h2>🖼️ Image Utility App</h2>
+            <div class="modal-actions">
+                <input type="file" id="file-input" accept="image/*">
+                <label for="file-input" id="upload-btn" class="action-btn">Upload Image</label>
+                <button id="download-btn" class="action-btn">Download Image</button>
             </div>
             
-            <div id="todo-content" class="toolkit-content active">
-                <input type="text" id="todo-input" placeholder="Add a new task...">
-                <button id="add-task-btn">Add Task</button>
-                <ul id="task-list"></ul>
+            <div id="image-preview-container">
+                <img id="image-preview" src="" alt="Image preview will appear here">
             </div>
 
-            <div id="stopwatch-content" class="toolkit-content">
-                <div id="stopwatch-display">00:00:00.00</div>
-                <div id="stopwatch-controls">
-                    <button id="start-stop-btn" class="stopwatch-btn">Start</button>
-                    <button id="reset-btn" class="stopwatch-btn">Reset</button>
-                </div>
+            <div id="image-controls">
+                <button class="filter-btn" data-filter="none">Normal</button>
+                <button class="filter-btn" data-filter="grayscale(100%)">Grayscale</button>
+                <button class="filter-btn" data-filter="sepia(100%)">Sepia</button>
+                <button class="filter-btn" data-filter="invert(100%)">Invert</button>
+                <button class="filter-btn" data-filter="contrast(200%)">Contrast</button>
+                <button class="filter-btn" data-filter="blur(5px)">Blur</button>
+                <button class="filter-btn" data-filter="brightness(150%)">Brighten</button>
+                <button class="filter-btn" data-filter="brightness(50%)">Darken</button>
+                <button class="filter-btn" data-filter="saturate(200%)">Saturate</button>
+                <button class="filter-btn" data-filter="saturate(50%)">Desaturate</button>
+                <button class="filter-btn" data-filter="hue-rotate(90deg)">Hue Shift</button>
+                <button class="filter-btn" data-filter="opacity(50%)">Transparent</button>
+                <button class="filter-btn" data-filter="drop-shadow(8px 8px 10px gray)">Shadow</button>
+                <button class="filter-btn" data-filter="sepia(1) saturate(3)">Vintage</button>
+                <button class="filter-btn" data-filter="contrast(1.4) saturate(1.2)">Vibrant</button>
+                <button class="filter-btn" data-filter="brightness(1.2) contrast(0.8) saturate(0.8)">Dreamy</button>
+                <button class="filter-btn" data-filter="grayscale(1) contrast(2)">Noir</button>
+                <button class="filter-btn" data-filter="hue-rotate(180deg) saturate(2)">Psychedelic</button>
+                <button class="filter-btn" data-filter="brightness(0.9) contrast(1.1) sepia(0.3)">Rustic</button>
+                <button class="filter-btn" data-filter="saturate(1.5) hue-rotate(-10deg)">Sunset</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- Productivity Toolkit Modal Logic ---
-        const productivityModal = document.getElementById('productivity-modal');
-        const productivityCard = document.getElementById('productivity-card');
-        const closePModalBtn = document.getElementById('productivity-modal-close-btn');
+        // --- Image Utility Modal Logic ---
+        const imageModal = document.getElementById('image-modal');
+        const imageUtilityCard = document.getElementById('image-utility-card');
+        const closeImageModalBtn = document.getElementById('image-modal-close-btn');
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+        const imageControls = document.getElementById('image-controls');
+        const downloadBtn = document.getElementById('download-btn');
 
-        productivityCard.addEventListener('click', () => {
-            productivityModal.classList.add('visible');
+        imageUtilityCard.addEventListener('click', () => {
+            imageModal.classList.add('visible');
         });
 
-        closePModalBtn.addEventListener('click', () => {
-            productivityModal.classList.remove('visible');
+        closeImageModalBtn.addEventListener('click', () => {
+            imageModal.classList.remove('visible');
         });
         
-        productivityModal.addEventListener('click', (e) => {
-            if (e.target === productivityModal) {
-                productivityModal.classList.remove('visible');
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                imageModal.classList.remove('visible');
             }
         });
 
-        // --- Toolkit Tab Logic ---
-        const tabs = document.querySelectorAll('.toolkit-tab');
-        const contents = document.querySelectorAll('.toolkit-content');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                contents.forEach(c => c.classList.remove('active'));
-                document.getElementById(`${tab.dataset.tab}-content`).classList.add('active');
-            });
-        });
-
-        // --- To-Do List Logic ---
-        const todoInput = document.getElementById('todo-input');
-        const addTaskBtn = document.getElementById('add-task-btn');
-        const taskList = document.getElementById('task-list');
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-
-        const renderTasks = () => {
-            taskList.innerHTML = '';
-            tasks.forEach((task, index) => {
-                const li = document.createElement('li');
-                li.className = `task-item ${task.completed ? 'completed' : ''}`;
-                li.innerHTML = `
-                    <span>${task.text}</span>
-                    <div class="task-actions">
-                        <button data-index="${index}" class="complete-btn"><i class="fas fa-check"></i></button>
-                        <button data-index="${index}" class="delete-btn"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                taskList.appendChild(li);
-            });
-        };
-
-        const addTask = () => {
-            const text = todoInput.value.trim();
-            if (text) {
-                tasks.push({ text, completed: false });
-                todoInput.value = '';
-                saveAndRender();
-            }
-        };
-
-        const saveAndRender = () => {
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-            renderTasks();
-        };
-
-        addTaskBtn.addEventListener('click', addTask);
-        todoInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addTask();
-        });
-
-        taskList.addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-            const index = btn.dataset.index;
-            if (btn.classList.contains('complete-btn')) {
-                tasks[index].completed = !tasks[index].completed;
-            } else if (btn.classList.contains('delete-btn')) {
-                tasks.splice(index, 1);
-            }
-            saveAndRender();
-        });
-
-        // --- Stopwatch Logic ---
-        const display = document.getElementById('stopwatch-display');
-        const startStopBtn = document.getElementById('start-stop-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        let timer = null, startTime = 0, elapsedTime = 0, isRunning = false;
-
-        const formatTime = () => {
-            const ms = String(elapsedTime % 1000).slice(0, 2).padStart(2, '0');
-            const sec = String(Math.floor(elapsedTime / 1000) % 60).padStart(2, '0');
-            const min = String(Math.floor(elapsedTime / (1000 * 60)) % 60).padStart(2, '0');
-            const hr = String(Math.floor(elapsedTime / (1000 * 60 * 60))).padStart(2, '0');
-            display.textContent = `${hr}:${min}:${sec}.${ms}`;
-        };
-
-        startStopBtn.addEventListener('click', () => {
-            if (!isRunning) {
-                startTime = Date.now() - elapsedTime;
-                timer = setInterval(() => {
-                    elapsedTime = Date.now() - startTime;
-                    formatTime();
-                }, 10);
-                startStopBtn.textContent = 'Stop';
-                startStopBtn.style.background = '#f56565';
-                isRunning = true;
-            } else {
-                clearInterval(timer);
-                startStopBtn.textContent = 'Start';
-                startStopBtn.style.background = '#38ef7d';
-                isRunning = false;
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imagePreview.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
             }
         });
 
-        resetBtn.addEventListener('click', () => {
-            clearInterval(timer);
-            elapsedTime = 0;
-            isRunning = false;
-            startStopBtn.textContent = 'Start';
-            startStopBtn.style.background = '#38ef7d';
-            formatTime();
+        imageControls.addEventListener('click', (e) => {
+            if (e.target.matches('.filter-btn')) {
+                const filter = e.target.dataset.filter;
+                imagePreview.style.filter = filter;
+            }
         });
 
-        // Initial render for to-do list
-        renderTasks();
+        downloadBtn.addEventListener('click', () => {
+            if (!imagePreview.src || imagePreview.src === window.location.href) {
+                alert("Please upload an image first.");
+                return;
+            }
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.crossOrigin = "anonymous"; // Handle potential CORS issues
+            img.src = imagePreview.src;
+
+            img.onload = () => {
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                
+                // Apply the same filter to the canvas context
+                ctx.filter = imagePreview.style.filter;
+                
+                // Draw the image onto the canvas
+                ctx.drawImage(img, 0, 0);
+                
+                // Create a link to download the canvas content
+                const link = document.createElement('a');
+                link.download = 'filtered-image.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            };
+            img.onerror = () => {
+                alert("Could not load the image for download. This can happen with some remote images due to security policies. Please try a different image.");
+            }
+        });
 
     </script>
 </body>
