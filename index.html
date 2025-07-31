@@ -228,6 +228,12 @@
             color: white;
             font-weight: bold;
             cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        #generate-story-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         #story-result {
@@ -343,12 +349,18 @@
         const storyResultDiv = document.getElementById('story-result');
         const storyLoader = document.getElementById('story-loader');
 
-        const apiKey = ""; // Leave empty, it will be handled by the environment
+        // API Key has been added here
+        const apiKey = "AIzaSyB_IiOpsTBoBUeG0PTrgTwxIU--xzS6qpI";
 
         const generateStory = async () => {
             const promptText = storyPromptInput.value;
             if (!promptText) {
                 storyResultDiv.textContent = "Please enter a topic for the story.";
+                return;
+            }
+            
+            if (apiKey === "" || apiKey === "YOUR_API_KEY_HERE") {
+                storyResultDiv.textContent = "API Key is missing. Please add your API key in the script section of the HTML file.";
                 return;
             }
 
@@ -383,7 +395,9 @@
                 }
 
                 if (!response.ok) {
-                    throw new Error(`API request failed with status ${response.status}`);
+                    const errorBody = await response.json();
+                    const errorMessage = errorBody?.error?.message || `API request failed with status ${response.status}`;
+                    throw new Error(errorMessage);
                 }
 
                 const result = await response.json();
@@ -399,7 +413,7 @@
 
             } catch (error) {
                 console.error("Gemini API Error:", error);
-                storyResultDiv.textContent = "Sorry, something went wrong while generating the story. Please try again later.";
+                storyResultDiv.textContent = `Error: ${error.message}. Please check the console for more details.`;
             } finally {
                 storyLoader.style.display = 'none';
                 generateBtn.disabled = false;
