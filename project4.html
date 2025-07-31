@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visually Stunning Authentication UI</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        /* --- Base Styles & Fonts --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- Glassmorphism Container --- */
+        #container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px) saturate(200%);
+            -webkit-backdrop-filter: blur(25px) saturate(200%);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        /* --- Panel Sliding Animations --- */
+        #container.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        #container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+            animation: show 0.6s;
+        }
+
+        @keyframes show {
+            0%, 49.99% { opacity: 0; z-index: 1; }
+            50%, 100% { opacity: 1; z-index: 5; }
+        }
+
+        #container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        #container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+        
+        #container.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        #container.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        /* --- Form & Overlay Base Styles --- */
+        .form-container, .overlay {
+            background: transparent; /* Make panels transparent for glass effect */
+        }
+        
+        .form-container h1 {
+            color: #1a202c; /* Dark text for light mode */
+        }
+        
+        .dark .form-container h1, .dark .form-container span {
+            color: #fff; /* White text for dark mode */
+        }
+
+        .overlay-container .overlay {
+             background: linear-gradient(to right, #ff4b2b, #ff416c);
+             background-repeat: no-repeat;
+             background-size: cover;
+             background-position: 0 0;
+        }
+
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen transition-colors duration-500">
+
+    <!-- Theme Switcher -->
+    <button id="theme-toggle" class="fixed top-5 right-5 p-3 rounded-full text-white bg-black/20 hover:bg-black/30 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300">
+        <i id="theme-icon" class="fas fa-sun text-xl"></i>
+    </button>
+
+    <div id="container" class="relative w-full max-w-4xl min-h-[580px] overflow-hidden">
+        
+        <!-- Sign Up Form -->
+        <div class="sign-up-container form-container absolute top-0 left-0 h-full w-1/2 opacity-0 z-10 transition-all duration-700 ease-in-out">
+            <form action="#" class="h-full w-full flex flex-col justify-center items-center px-12 text-center">
+                <h1 class="text-3xl font-bold mb-4">Create Account</h1>
+                <div class="flex items-center space-x-4 my-3">
+                    <a href="#" class="social-link"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                </div>
+                <span class="text-sm text-gray-600 dark:text-gray-300 mb-4">or use your email for registration</span>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" placeholder="Name" />
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="Email" />
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" placeholder="Password" />
+                </div>
+                <button class="form-button mt-6">Sign Up</button>
+            </form>
+        </div>
+
+        <!-- Sign In Form -->
+        <div class="sign-in-container form-container absolute top-0 left-0 h-full w-1/2 z-20 transition-all duration-700 ease-in-out">
+            <form action="#" class="h-full w-full flex flex-col justify-center items-center px-12 text-center">
+                <h1 class="text-3xl font-bold mb-4">Sign In</h1>
+                <div class="flex items-center space-x-4 my-3">
+                    <a href="#" class="social-link"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                </div>
+                <span class="text-sm text-gray-600 dark:text-gray-300 mb-4">or use your account</span>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="Email" />
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" placeholder="Password" />
+                </div>
+                <a href="#" class="text-sm text-gray-500 dark:text-gray-400 my-4 hover:underline">Forgot your password?</a>
+                <button class="form-button">Sign In</button>
+            </form>
+        </div>
+
+        <!-- Overlay -->
+        <div class="overlay-container absolute top-0 left-1/2 w-1/2 h-full overflow-hidden z-50 transition-all duration-700 ease-in-out rounded-r-2xl">
+            <div class="overlay relative -left-full h-full w-[200%] text-white transform transition-all duration-700 ease-in-out">
+                
+                <div class="overlay-panel overlay-left absolute top-0 h-full w-1/2 flex flex-col justify-center items-center text-center px-10 transform transition-all duration-700 ease-in-out -translate-x-[20%]">
+                    <h1 class="text-3xl font-bold">Welcome Back!</h1>
+                    <p class="text-base font-light mt-4 mb-6">To keep connected with us please login with your personal info</p>
+                    <button class="ghost-button" id="signIn">Sign In</button>
+                </div>
+
+                <div class="overlay-panel overlay-right absolute top-0 right-0 h-full w-1/2 flex flex-col justify-center items-center text-center px-10 transform transition-all duration-700 ease-in-out translate-x-0">
+                    <h1 class="text-3xl font-bold">Hello, Friend!</h1>
+                    <p class="text-base font-light mt-4 mb-6">Enter your personal details and start your journey with us</p>
+                    <button class="ghost-button" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        // --- Form Switching Logic ---
+        signUpButton.addEventListener('click', () => container.classList.add("right-panel-active"));
+        signInButton.addEventListener('click', () => container.classList.remove("right-panel-active"));
+
+        // --- Theme Switching Logic ---
+        const setTheme = (theme) => {
+            document.documentElement.classList.toggle('dark', theme === 'dark');
+            themeIcon.classList.toggle('fa-sun', theme === 'light');
+            themeIcon.classList.toggle('fa-moon', theme === 'dark');
+            localStorage.setItem('theme', theme);
+            
+            // Animate icon transition
+            themeIcon.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                themeIcon.style.transform = 'rotate(0deg)';
+            }, 500);
+        };
+
+        themeToggleBtn.addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+
+        // Initialize theme on load
+        const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        setTheme(currentTheme);
+    </script>
+    
+    <style>
+      /* --- Reusable Component Styles with @apply --- */
+      .input-group {
+        @apply bg-white/50 dark:bg-black/20 w-full p-3.5 my-2 rounded-lg flex items-center transition-all duration-300 focus-within:ring-2 focus-within:ring-white/50;
+      }
+      .input-group i {
+        @apply text-gray-600 dark:text-gray-300 mr-3;
+      }
+      .input-group input {
+        @apply w-full bg-transparent border-none outline-none text-sm text-gray-800 dark:text-white placeholder-gray-600 dark:placeholder-gray-300;
+      }
+      .form-button {
+        @apply bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold uppercase text-sm px-12 py-3.5 rounded-full tracking-wider shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-100 transition-all duration-300 ease-in-out focus:outline-none;
+      }
+      .ghost-button {
+        @apply bg-transparent border-2 border-white text-white font-bold uppercase text-sm px-12 py-3.5 rounded-full tracking-wider shadow-md hover:bg-white/20 transform hover:scale-105 active:scale-100 transition-all duration-300 ease-in-out focus:outline-none;
+      }
+      .social-link {
+        @apply h-11 w-11 flex items-center justify-center border-2 border-gray-400/50 dark:border-white/50 rounded-full text-gray-700 dark:text-white text-lg hover:bg-black/10 dark:hover:bg-white/20 transform hover:scale-110 transition-all duration-300;
+      }
+      #theme-icon {
+        transition: transform 0.5s ease-in-out;
+      }
+    </style>
+
+</body>
+</html>

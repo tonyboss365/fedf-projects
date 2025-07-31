@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Game Zone - Interactive Gaming Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .game-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .game-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            border: none;
+            border-radius: 25px;
+            padding: 1rem 2rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-btn.active {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            transform: translateY(-2px);
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            width: 100%;
+            min-height: 400px;
+        }
+
+        .game {
+            display: none;
+        }
+
+        .game.active {
+            display: block;
+        }
+
+        .game h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        /* Tic Tac Toe Styles */
+        .tic-tac-toe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            max-width: 300px;
+            margin: 0 auto 2rem;
+            background: #333;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .tic-cell {
+            aspect-ratio: 1;
+            background: white;
+            border: none;
+            font-size: 3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 5px;
+        }
+
+        .tic-cell:hover {
+            background: #f0f0f0;
+            transform: scale(0.95);
+        }
+
+        .tic-cell.x {
+            color: #ff6b6b;
+        }
+
+        .tic-cell.o {
+            color: #4ecdc4;
+        }
+
+        .game-status {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .reset-btn {
+            background: linear-gradient(45deg, #45b7d1, #2980b9);
+            border: none;
+            border-radius: 15px;
+            padding: 0.8rem 2rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Memory Game Styles */
+        .memory-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto 2rem;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 10px;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .memory-card:hover {
+            transform: scale(0.95);
+        }
+
+        .memory-card.flipped {
+            background: white;
+            transform: rotateY(180deg);
+        }
+
+        .memory-card.matched {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            cursor: default;
+        }
+
+        .memory-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Bubble Pop Styles */
+        .bubble-game-area {
+            position: relative;
+            height: 400px;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            cursor: crosshair;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            animation: float 3s ease-in-out infinite;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), transparent 50%);
+            transition: all 0.2s ease;
+        }
+
+        .bubble:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .bubble.popping {
+            animation: pop 0.3s ease-out forwards;
+        }
+
+        .bubble-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            border-radius: 15px;
+            padding: 0.8rem 2rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Quiz Game Styles */
+        .quiz-question {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-option {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .quiz-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .quiz-option.selected {
+            border-color: #4ecdc4;
+            background: #e6fffa;
+        }
+
+        .quiz-option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .quiz-option.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .quiz-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 0 1rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            transition: width 0.3s ease;
+        }
+
+        .next-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 15px;
+            padding: 0.8rem 2rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            float: right;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quiz-result {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .quiz-result h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            color: #4ecdc4;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .game-container {
+                padding: 1rem;
+                margin: 0 1rem;
+            }
+            
+            .memory-board {
+                max-width: 300px;
+            }
+            
+            .tic-tac-toe-board {
+                max-width: 250px;
+            }
+            
+            .tic-cell {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎮 MINI GAME ZONE 🎮</h1>
+        <p>Interactive games for fun and skill building!</p>
+    </div>
+
+    <div class="game-selector">
+        <button class="game-btn active" onclick="showGame('tic-tac-toe')">🎯 Tic Tac Toe</button>
+        <button class="game-btn" onclick="showGame('memory')">🧠 Memory Match</button>
+        <button class="game-btn" onclick="showGame('bubble')">💫 Bubble Pop</button>
+        <button class="game-btn" onclick="showGame('quiz')">🎓 Quick Quiz</button>
+    </div>
+
+    <div class="game-container">
+        <div id="tic-tac-toe" class="game active">
+            <h2>🎯 Tic Tac Toe</h2>
+            <div class="game-status" id="tic-status">Player X's turn</div>
+            <div class="tic-tac-toe-board" id="tic-board">
+                <button class="tic-cell" onclick="makeMove(0)"></button>
+                <button class="tic-cell" onclick="makeMove(1)"></button>
+                <button class="tic-cell" onclick="makeMove(2)"></button>
+                <button class="tic-cell" onclick="makeMove(3)"></button>
+                <button class="tic-cell" onclick="makeMove(4)"></button>
+                <button class="tic-cell" onclick="makeMove(5)"></button>
+                <button class="tic-cell" onclick="makeMove(6)"></button>
+                <button class="tic-cell" onclick="makeMove(7)"></button>
+                <button class="tic-cell" onclick="makeMove(8)"></button>
+            </div>
+            <button class="reset-btn" onclick="resetTicTacToe()">🔄 Reset Game</button>
+        </div>
+
+        <div id="memory" class="game">
+            <h2>🧠 Memory Match</h2>
+            <div class="memory-stats">
+                <div>Moves: <span id="memory-moves">0</span></div>
+                <div>Matches: <span id="memory-matches">0</span></div>
+                <div>Time: <span id="memory-time">0</span>s</div>
+            </div>
+            <div class="memory-board" id="memory-board"></div>
+            <button class="reset-btn" onclick="resetMemoryGame()">🔄 New Game</button>
+        </div>
+
+        <div id="bubble" class="game">
+            <h2>💫 Bubble Pop</h2>
+            <div class="bubble-stats">
+                <div>Score: <span id="bubble-score">0</span></div>
+                <div>Time: <span id="bubble-time">30</span>s</div>
+                <div>Level: <span id="bubble-level">1</span></div>
+            </div>
+            <div class="bubble-game-area" id="bubble-area"></div>
+            <div style="text-align: center;">
+                <button class="start-btn" onclick="startBubbleGame()">🎮 Start Game</button>
+                <button class="reset-btn" onclick="resetBubbleGame()">🔄 Reset</button>
+            </div>
+        </div>
+
+        <div id="quiz" class="game">
+            <h2>🎓 Quick Quiz</h2>
+            <div class="quiz-progress">
+                <span>Question <span id="quiz-current">1</span> of <span id="quiz-total">5</span></span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="quiz-progress"></div>
+                </div>
+                <span>Score: <span id="quiz-score">0</span></span>
+            </div>
+            <div id="quiz-content">
+                <div class="quiz-question" id="quiz-question">Loading question...</div>
+                <div class="quiz-options" id="quiz-options"></div>
+                <button class="next-btn" id="quiz-next" onclick="nextQuestion()" disabled>Next Question</button>
+            </div>
+            <div id="quiz-result" class="quiz-result" style="display: none;">
+                <h3>🎉 Quiz Complete!</h3>
+                <div class="score-display" id="final-score">0/5</div>
+                <p>Great job! Keep practicing to improve your score.</p>
+                <button class="reset-btn" onclick="resetQuiz()">🔄 Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State Management
+        let currentGame = 'tic-tac-toe';
+
+        function showGame(gameId) {
+            console.log('Switching to game:', gameId);
+            
+            // Hide all games
+            document.querySelectorAll('.game').forEach(game => {
+                game.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.game-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected game
+            const selectedGame = document.getElementById(gameId);
+            if (selectedGame) {
+                selectedGame.classList.add('active');
+            }
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            currentGame = gameId;
+            
+            // Initialize specific games when shown for the first time
+            if (gameId === 'memory' && memoryCards.length === 0) {
+                initMemoryGame();
+            }
+        }
+
+        // Tic Tac Toe Game
+        let ticBoard = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function makeMove(index) {
+            console.log('Making move at index:', index);
+            
+            if (ticBoard[index] !== '' || !gameActive) {
+                console.log('Invalid move');
+                return;
+            }
+            
+            ticBoard[index] = currentPlayer;
+            const cells = document.querySelectorAll('.tic-cell');
+            const cell = cells[index];
+            
+            if (cell) {
+                cell.textContent = currentPlayer;
+                cell.classList.add(currentPlayer.toLowerCase());
+            }
+            
+            if (checkWin()) {
+                document.getElementById('tic-status').textContent = `Player ${currentPlayer} wins! 🎉`;
+                gameActive = false;
+                return;
+            }
+            
+            if (ticBoard.every(cell => cell !== '')) {
+                document.getElementById('tic-status').textContent = "It's a tie! 🤝";
+                gameActive = false;
+                return;
+            }
+            
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            document.getElementById('tic-status').textContent = `Player ${currentPlayer}'s turn`;
+        }
+
+        function checkWin() {
+            return winningConditions.some(condition => {
+                return condition.every(index => {
+                    return ticBoard[index] === currentPlayer;
+                });
+            });
+        }
+
+        function resetTicTacToe() {
+            ticBoard = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            document.getElementById('tic-status').textContent = "Player X's turn";
+            
+            document.querySelectorAll('.tic-cell').forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x', 'o');
+            });
+        }
+
+        // Memory Match Game
+        let memoryCards = [];
+        let flippedCards = [];
+        let memoryMatches = 0;
+        let memoryMoves = 0;
+        let memoryTimer = 0;
+        let memoryInterval;
+
+        const memorySymbols = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
+
+        function initMemoryGame() {
+            const shuffledSymbols = [...memorySymbols, ...memorySymbols].sort(() => Math.random() - 0.5);
+            memoryCards = shuffledSymbols;
+            
+            const board = document.getElementById('memory-board');
+            board.innerHTML = '';
+            
+            memoryCards.forEach((symbol, index) => {
+                const card = document.createElement('button');
+                card.className = 'memory-card';
+                card.dataset.symbol = symbol;
+                card.dataset.index = index;
+                card.onclick = () => flipCard(index);
+                board.appendChild(card);
+            });
+
+            memoryMatches = 0;
+            memoryMoves = 0;
+            memoryTimer = 0;
+            flippedCards = [];
+            
+            updateMemoryStats();
+            
+            clearInterval(memoryInterval); // Clear any existing timer before starting a new one
+            memoryInterval = setInterval(() => {
+                memoryTimer++;
+                updateMemoryStats();
+            }, 1000);
+        }
+
+        function flipCard(index) {
+            console.log('Flipping card at index:', index);
+            
+            const card = document.querySelector(`[data-index="${index}"]`);
+            if (!card || card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length >= 2) {
+                console.log('Card flip blocked');
+                return;
+            }
+            
+            card.classList.add('flipped');
+            card.textContent = card.dataset.symbol;
+            flippedCards.push(index);
+            
+            console.log('Flipped cards:', flippedCards);
+            
+            if (flippedCards.length === 2) {
+                memoryMoves++;
+                updateMemoryStats();
+                
+                setTimeout(() => {
+                    checkMemoryMatch();
+                }, 800);
+            }
+        }
+
+        function checkMemoryMatch() {
+            const [first, second] = flippedCards;
+            const firstCard = document.querySelector(`[data-index="${first}"]`);
+            const secondCard = document.querySelector(`[data-index="${second}"]`);
+            
+            if (memoryCards[first] === memoryCards[second]) {
+                firstCard.classList.add('matched');
+                secondCard.classList.add('matched');
+                memoryMatches++;
+                
+                if (memoryMatches === 8) {
+                    clearInterval(memoryInterval);
+                    setTimeout(() => {
+                        alert(`🎉 Congratulations! You won in ${memoryMoves} moves and ${memoryTimer} seconds!`);
+                    }, 500);
+                }
+            } else {
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+                firstCard.textContent = '';
+                secondCard.textContent = '';
+            }
+            
+            flippedCards = [];
+            updateMemoryStats();
+        }
+
+        function updateMemoryStats() {
+            document.getElementById('memory-moves').textContent = memoryMoves;
+            document.getElementById('memory-matches').textContent = memoryMatches;
+            document.getElementById('memory-time').textContent = memoryTimer;
+        }
+
+        function resetMemoryGame() {
+            clearInterval(memoryInterval);
+            initMemoryGame();
+        }
+
+        // Bubble Pop Game
+        let bubbleScore = 0;
+        let bubbleTimeLeft = 30;
+        let bubbleLevel = 1;
+        let bubbleInterval;
+        let bubbleSpawnInterval;
+        let bubbleGameActive = false;
+
+        function startBubbleGame() {
+            console.log('Starting bubble game');
+            
+            if (bubbleGameActive) {
+                console.log('Game already active');
+                return;
+            }
+            
+            bubbleGameActive = true;
+            bubbleScore = 0;
+            bubbleTimeLeft = 30;
+            bubbleLevel = 1;
+            
+            // Clear any existing bubbles
+            document.getElementById('bubble-area').innerHTML = '';
+            
+            updateBubbleStats();
+            
+            bubbleInterval = setInterval(() => {
+                bubbleTimeLeft--;
+                updateBubbleStats();
+                
+                if (bubbleTimeLeft <= 0) {
+                    endBubbleGame();
+                }
+            }, 1000);
+            
+            // Spawn bubbles more frequently for better gameplay
+            bubbleSpawnInterval = setInterval(spawnBubble, 800);
+            
+            // Spawn first bubble immediately
+            spawnBubble();
+        }
+
+        function spawnBubble() {
+            if (!bubbleGameActive) return;
+            
+            const gameArea = document.getElementById('bubble-area');
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const size = Math.random() * 40 + 30;
+            
+            bubble.style.background = `radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), ${color})`;
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.left = Math.random() * (gameArea.clientWidth - size) + 'px';
+            bubble.style.top = Math.random() * (gameArea.clientHeight - size) + 'px';
+            
+            bubble.onclick = () => popBubble(bubble, size);
+            
+            gameArea.appendChild(bubble);
+            
+            // Remove bubble after 3 seconds if not popped
+            setTimeout(() => {
+                if (bubble.parentNode) {
+                    bubble.parentNode.removeChild(bubble);
+                }
+            }, 3000);
+        }
+
+        function popBubble(bubble, size) {
+            bubble.classList.add('popping');
+            const points = Math.ceil(size / 10);
+            bubbleScore += points;
+            
+            // Level up every 100 points
+            bubbleLevel = Math.floor(bubbleScore / 100) + 1;
+            
+            updateBubbleStats();
+            
+            setTimeout(() => {
+                if (bubble.parentNode) {
+                    bubble.parentNode.removeChild(bubble);
+                }
+            }, 300);
+        }
+
+        function updateBubbleStats() {
+            document.getElementById('bubble-score').textContent = bubbleScore;
+            document.getElementById('bubble-time').textContent = bubbleTimeLeft;
+            document.getElementById('bubble-level').textContent = bubbleLevel;
+        }
+
+        function endBubbleGame() {
+            bubbleGameActive = false;
+            clearInterval(bubbleInterval);
+            clearInterval(bubbleSpawnInterval);
+            
+            // Clear all bubbles
+            document.getElementById('bubble-area').innerHTML = '';
+            
+            alert(`🎉 Game Over! Final Score: ${bubbleScore} points (Level ${bubbleLevel})`);
+        }
+
+        function resetBubbleGame() {
+            bubbleGameActive = false;
+            clearInterval(bubbleInterval);
+            clearInterval(bubbleSpawnInterval);
+            
+            bubbleScore = 0;
+            bubbleTimeLeft = 30;
+            bubbleLevel = 1;
+            
+            document.getElementById('bubble-area').innerHTML = '';
+            updateBubbleStats();
+        }
+
+        // Quiz Game
+        const quizQuestions = [
+            {
+                question: "What does HTML stand for?",
+                options: ["Hyper Text Markup Language", "High Tech Modern Language", "Home Tool Markup Language", "Hyperlink and Text Markup Language"],
+                correct: 0
+            },
+            {
+                question: "Which CSS property controls the text size?",
+                options: ["text-style", "font-size", "text-size", "font-style"],
+                correct: 1
+            },
+            {
+                question: "What does 'DOM' stand for in JavaScript?",
+                options: ["Data Object Model", "Document Object Model", "Dynamic Object Model", "Display Object Model"],
+                correct: 1
+            },
+            {
+                question: "Which company developed JavaScript?",
+                options: ["Microsoft", "Netscape", "Google", "Apple"],
+                correct: 1
+            },
+            {
+                question: "What is the correct way to write a JavaScript array?",
+                options: ["var colors = 'red', 'green', 'blue'", "var colors = (1:'red', 2:'green', 3:'blue')", "var colors = ['red', 'green', 'blue']", "var colors = 1 = ('red'), 2 = ('green'), 3 = ('blue')"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let quizScore = 0;
+        let selectedAnswer = null;
+
+        function initQuiz() {
+            currentQuestionIndex = 0;
+            quizScore = 0;
+            selectedAnswer = null;
+            document.getElementById('quiz-content').style.display = 'block';
+            document.getElementById('quiz-result').style.display = 'none';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = quizQuestions[currentQuestionIndex];
+            document.getElementById('quiz-question').textContent = question.question;
+            document.getElementById('quiz-current').textContent = currentQuestionIndex + 1;
+            document.getElementById('quiz-total').textContent = quizQuestions.length;
+            document.getElementById('quiz-score').textContent = quizScore;
+            
+            const progress = ((currentQuestionIndex) / quizQuestions.length) * 100;
+            document.getElementById('quiz-progress').style.width = progress + '%';
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            document.getElementById('quiz-next').disabled = true;
+            selectedAnswer = null;
+        }
+
+        function selectAnswer(index) {
+            console.log('Answer selected:', index);
+            
+            selectedAnswer = index;
+            document.querySelectorAll('.quiz-option').forEach((option, i) => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+                if (i === index) {
+                    option.classList.add('selected');
+                }
+            });
+            document.getElementById('quiz-next').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (selectedAnswer === null) {
+                console.log('No answer selected');
+                return;
+            }
+            
+            console.log('Processing answer:', selectedAnswer);
+            
+            const question = quizQuestions[currentQuestionIndex];
+            const isCorrect = selectedAnswer === question.correct;
+            
+            if (isCorrect) {
+                quizScore++;
+                console.log('Correct answer! Score:', quizScore);
+            }
+            
+            // Show correct/incorrect answers
+            document.querySelectorAll('.quiz-option').forEach((option, i) => {
+                if (i === question.correct) {
+                    option.classList.add('correct');
+                } else if (i === selectedAnswer && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Disable next button during transition
+            document.getElementById('quiz-next').disabled = true;
+            
+            setTimeout(() => {
+                currentQuestionIndex++;
+                
+                if (currentQuestionIndex >= quizQuestions.length) {
+                    showQuizResult();
+                } else {
+                    showQuestion();
+                }
+            }, 1500);
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('quiz-result').style.display = 'block';
+            document.getElementById('final-score').textContent = `${quizScore}/${quizQuestions.length}`;
+            
+            const progress = (quizScore / quizQuestions.length) * 100;
+            document.getElementById('quiz-progress').style.width = '100%';
+        }
+
+        function resetQuiz() {
+            initQuiz();
+        }
+
+        // Initialize games when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, initializing games...');
+            resetTicTacToe();
+            // CORRECTION: Removed initMemoryGame() from here to prevent the timer
+            // from starting on page load and running in the background.
+            // It will now start correctly when the user selects the memory game.
+            resetBubbleGame();
+            initQuiz();
+        });
+    </script>
+</body>
+</html>

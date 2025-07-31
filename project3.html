@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Calculator App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+        .calculator-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .calculator-btn:hover {
+            transform: scale(1.05);
+        }
+        .calculator-btn:active {
+            transform: scale(0.95);
+        }
+        .tab-btn.active {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md mx-auto bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+        <header class="bg-gray-900 p-4">
+            <h1 class="text-2xl font-bold text-center text-indigo-400">Multi-Calculator</h1>
+        </header>
+
+        <div class="p-4 sm:p-6">
+            <div class="flex justify-center mb-6 bg-gray-700 rounded-lg p-1">
+                <button class="tab-btn flex-1 py-2 px-4 rounded-md text-sm sm:text-base font-medium focus:outline-none active" data-tab="standard">Standard</button>
+                <button class="tab-btn flex-1 py-2 px-4 rounded-md text-sm sm:text-base font-medium focus:outline-none" data-tab="bmi">BMI</button>
+                <button class="tab-btn flex-1 py-2 px-4 rounded-md text-sm sm:text-base font-medium focus:outline-none" data-tab="currency">Currency</button>
+            </div>
+
+            <!-- Standard Calculator -->
+            <div id="standard" class="tab-content active">
+                <div class="bg-gray-900 rounded-lg p-4 mb-4 text-right">
+                    <div id="display" class="text-4xl font-light break-all">0</div>
+                </div>
+                <div class="calculator-grid">
+                    <button class="calculator-btn bg-gray-700 hover:bg-gray-600 p-4 rounded-lg text-xl" onclick="clearDisplay()">AC</button>
+                    <button class="calculator-btn bg-gray-700 hover:bg-gray-600 p-4 rounded-lg text-xl" onclick="deleteLast()">DEL</button>
+                    <button class="calculator-btn bg-indigo-500 hover:bg-indigo-600 p-4 rounded-lg text-xl" onclick="appendCharacter('%')">%</button>
+                    <button class="calculator-btn bg-indigo-500 hover:bg-indigo-600 p-4 rounded-lg text-xl" onclick="appendCharacter('/')">÷</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl" onclick="appendCharacter('7')">7</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl" onclick="appendCharacter('8')">8</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl" onclick="appendCharacter('9')">9</button>
+                    <button class="calculator-btn bg-indigo-500 hover:bg-indigo-600 p-4 rounded-lg text-xl" onclick="appendCharacter('*')">×</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl" onclick="appendCharacter('4')">4</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl" onclick="appendCharacter('5')">5</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl" onclick="appendCharacter('6')">6</button>
+                    <button class="calculator-btn bg-indigo-500 hover:bg-indigo-600 p-4 rounded-lg text-xl" onclick="appendCharacter('-')">−</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl" onclick="appendCharacter('1')">1</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl" onclick="appendCharacter('2')">2</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl" onclick="appendCharacter('3')">3</button>
+                    <button class="calculator-btn bg-indigo-500 hover:bg-indigo-600 p-4 rounded-lg text-xl" onclick="appendCharacter('+')">+</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl col-span-2" onclick="appendCharacter('0')">0</button>
+                    <button class="calculator-btn bg-gray-600 hover:bg-gray-500 p-4 rounded-lg text-xl" onclick="appendCharacter('.')">.</button>
+                    <button class="calculator-btn bg-green-500 hover:bg-green-600 p-4 rounded-lg text-xl" onclick="calculateResult()">=</button>
+                </div>
+            </div>
+
+            <!-- BMI Calculator -->
+            <div id="bmi" class="tab-content">
+                <div class="space-y-4">
+                    <div>
+                        <label for="height" class="block text-sm font-medium text-gray-400">Height (cm)</label>
+                        <input type="number" id="height" class="w-full mt-1 bg-gray-700 border-gray-600 rounded-md p-3 text-white focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="weight" class="block text-sm font-medium text-gray-400">Weight (kg)</label>
+                        <input type="number" id="weight" class="w-full mt-1 bg-gray-700 border-gray-600 rounded-md p-3 text-white focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <button class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg" onclick="calculateBMI()">Calculate BMI</button>
+                    <div id="bmiResult" class="text-center mt-4 text-lg"></div>
+                </div>
+            </div>
+
+            <!-- Currency Converter -->
+            <div id="currency" class="tab-content">
+                 <div class="space-y-4">
+                    <div>
+                        <label for="amount" class="block text-sm font-medium text-gray-400">Amount</label>
+                        <input type="number" id="amount" class="w-full mt-1 bg-gray-700 border-gray-600 rounded-md p-3 text-white focus:ring-indigo-500 focus:border-indigo-500" value="1">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1/2">
+                            <label for="fromCurrency" class="block text-sm font-medium text-gray-400">From</label>
+                            <select id="fromCurrency" class="w-full mt-1 bg-gray-700 border-gray-600 rounded-md p-3 text-white focus:ring-indigo-500 focus:border-indigo-500"></select>
+                        </div>
+                        <div class="w-1/2">
+                            <label for="toCurrency" class="block text-sm font-medium text-gray-400">To</label>
+                            <select id="toCurrency" class="w-full mt-1 bg-gray-700 border-gray-600 rounded-md p-3 text-white focus:ring-indigo-500 focus:border-indigo-500"></select>
+                        </div>
+                    </div>
+                    <button class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg" onclick="convertCurrency()">Convert</button>
+                    <div id="currencyResult" class="text-center mt-4 text-lg"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Tab Navigation ---
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const tab = button.dataset.tab;
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tab) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // --- Standard Calculator ---
+        const display = document.getElementById('display');
+        let currentInput = '0';
+
+        function appendCharacter(char) {
+            if (currentInput === '0' && char !== '.') {
+                currentInput = char;
+            } else {
+                currentInput += char;
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            updateDisplay();
+        }
+        
+        function deleteLast() {
+            currentInput = currentInput.slice(0, -1);
+            if (currentInput === '') {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        function calculateResult() {
+            try {
+                // Replace visual operators with functional ones
+                let expression = currentInput.replace(/÷/g, '/').replace(/×/g, '*');
+                let result = eval(expression);
+                currentInput = String(result);
+                updateDisplay();
+            } catch (error) {
+                currentInput = 'Error';
+                updateDisplay();
+                setTimeout(() => {
+                    clearDisplay();
+                }, 1500);
+            }
+        }
+        
+        // --- BMI Calculator ---
+        function calculateBMI() {
+            const height = document.getElementById('height').value;
+            const weight = document.getElementById('weight').value;
+            const resultDiv = document.getElementById('bmiResult');
+
+            if (height > 0 && weight > 0) {
+                const bmi = (weight / ((height / 100) ** 2)).toFixed(2);
+                let category = '';
+                if (bmi < 18.5) {
+                    category = 'Underweight';
+                } else if (bmi >= 18.5 && bmi <= 24.9) {
+                    category = 'Normal weight';
+                } else if (bmi >= 25 && bmi <= 29.9) {
+                    category = 'Overweight';
+                } else {
+                    category = 'Obesity';
+                }
+                resultDiv.innerHTML = `Your BMI is <span class="font-bold text-indigo-400">${bmi}</span>. <br> You are in the <span class="font-bold text-indigo-400">${category}</span> category.`;
+            } else {
+                resultDiv.textContent = 'Please enter valid height and weight.';
+            }
+        }
+
+        // --- Currency Converter ---
+        const fromCurrencySelect = document.getElementById('fromCurrency');
+        const toCurrencySelect = document.getElementById('toCurrency');
+        const currencyResultDiv = document.getElementById('currencyResult');
+        const amountInput = document.getElementById('amount');
+
+        const apiKey = 'YOUR_API_KEY'; // Replace with a real API key from a provider like exchangerate-api.com
+        const apiUrl = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`;
+        
+        // Using a fallback for demonstration if API key is not provided
+        const fallbackRates = {
+            "USD": 1, "EUR": 0.92, "GBP": 0.79, "JPY": 157.5, "AUD": 1.5, "CAD": 1.37, "CHF": 0.9, "CNY": 7.25, "INR": 83.5
+        };
+
+        async function populateCurrencies() {
+            try {
+                // In a real app, you would fetch this from the API
+                // For this demo, we use the fallback rates
+                const currencies = Object.keys(fallbackRates);
+
+                currencies.forEach(currency => {
+                    const option1 = document.createElement('option');
+                    option1.value = currency;
+                    option1.textContent = currency;
+                    fromCurrencySelect.appendChild(option1);
+
+                    const option2 = document.createElement('option');
+                    option2.value = currency;
+                    option2.textContent = currency;
+                    toCurrencySelect.appendChild(option2);
+                });
+                fromCurrencySelect.value = 'USD';
+                toCurrencySelect.value = 'EUR';
+            } catch (error) {
+                currencyResultDiv.textContent = 'Could not load currencies.';
+                console.error("Currency Fetch Error:", error);
+            }
+        }
+
+        async function convertCurrency() {
+            const amount = amountInput.value;
+            const fromCurrency = fromCurrencySelect.value;
+            const toCurrency = toCurrencySelect.value;
+
+            if (!amount || amount <= 0) {
+                currencyResultDiv.textContent = 'Please enter a valid amount.';
+                return;
+            }
+            
+            currencyResultDiv.textContent = 'Converting...';
+
+            try {
+                // Using fallback rates for this demo
+                const rateFrom = fallbackRates[fromCurrency];
+                const rateTo = fallbackRates[toCurrency];
+                
+                if(rateFrom && rateTo) {
+                    const convertedAmount = (amount / rateFrom) * rateTo;
+                    currencyResultDiv.innerHTML = `${amount} ${fromCurrency} = <span class="font-bold text-indigo-400">${convertedAmount.toFixed(2)} ${toCurrency}</span>`;
+                } else {
+                     currencyResultDiv.textContent = 'Conversion rate not available.';
+                }
+
+            } catch (error) {
+                currencyResultDiv.textContent = 'Error during conversion.';
+                console.error("Conversion Error:", error);
+            }
+        }
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+            populateCurrencies();
+        });
+
+    </script>
+</body>
+</html>
